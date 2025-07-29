@@ -3,15 +3,55 @@
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Klinikum Formular</title>
   <link rel="stylesheet" href="./src/nicolas.css" />
-  <script type="module" src="/src/file-upload.ts"></script>
+  <script type="module" src="/src/picture-upload.ts"></script>
+
+  <style>
+    .formcontainer {
+      max-width: 700px;
+      align-self: center;
+    }
+
+    .namecontainer {
+      padding-top: 16px;
+      display: flex;
+      gap: 8px;
+      justify-content: stretch;
+    }
+
+    .formfield {
+      width: 100%;
+    }
+  </style>
 </head>
 
 <body>
-  <file-upload.ts></file-upload.ts>
+  <section class="formcontainer">
+
+    <form>
+      <h2>Patientenformular</h2>
+
+      <div class="namecontainer">
+        <div class="formfield">
+          <label for="firstname">Vorname</label>
+          <input type="text" id="firstname">
+        </div>
+        <div class="formfield">
+          <label for="lastname">Vorname</label>
+          <input type="text" id="lastname">
+        </div>
+      </div>
+
+      <label for="picture-upload">Bilder hochladen</label>
+      <picture-upload id="picture-upload"></picture-upload>
+      <br>
+      <button type="submit">Absenden</button>
+    </form>
+  </section>
+
 </body>
 
 </html>

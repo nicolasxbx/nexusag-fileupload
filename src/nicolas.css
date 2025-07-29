@@ -346,9 +346,9 @@ fieldset {
     background-color: var(--card-bg);
     padding: var(--spacing-base);
     border-radius: var(--border-radius-lg);
-    box-shadow: var(--shadow-md);
+    /* box-shadow: var(--shadow-md); */
     margin-bottom: var(--spacing-base);
-    border: 1px solid var(--border-color);
+    /* border: 1px solid var(--border-color); */
 }
 
 form>div {
