@@ -1,60 +1,115 @@
 import { LitElement, css, html } from "lit";
-import { customElement, state } from "lit/decorators.js";
+import { customElement, property, query, state } from "lit/decorators.js";
 
 /**
  * An interactive reusable component to upload pictures (.jpg, .png)
  * Features: Preview, Drag & Drop
+ * @required = if atleast
  */
 @customElement("picture-upload")
 export class PictureUpload extends LitElement {
-  /* MIME types */
-  _acceptedTypes: string = "image/png,image/jpeg";
+  // The minimum amount of files that have to be uploaded
+  @property({ type: Number })
+  required: number = 0;
 
-  /* Internal list of selected files */
+  // Internal list of selected files
   @state()
   private _files: File[] = [];
 
-  firstUpdated(): void {
-    const zone = this.shadowRoot!.querySelector(".upload-zone") as HTMLElement;
-    zone.addEventListener("click", () =>
-      this.shadowRoot!.getElementById("fileInput")!.click()
-    );
+  // Reference to the file input element
+  @query("#fileInput")
+  private fileInput!: HTMLInputElement;
+
+  // MIME types
+  _acceptedTypes: string = "image/png,image/jpeg";
+
+  // Redirect click of container to "fileInput"-component
+  private onUploadZoneClick() {
+    this.fileInput.click();
   }
 
   private onDrop(e: DragEvent) {
     e.preventDefault();
-    if (e.dataTransfer) this.processFiles(Array.from(e.dataTransfer.files));
+    if (e.dataTransfer) this.onFileInput(Array.from(e.dataTransfer.files));
   }
 
   private onFileSelect(e: Event) {
     const input = e.target as HTMLInputElement;
     if (input.files) {
-      this.processFiles(Array.from(input.files));
+      this.onFileInput(Array.from(input.files));
       input.value = "";
     }
   }
 
-  private processFiles(newFiles: File[]) {
+  private onFileInput(newFiles: File[]) {
     const accepted = this._acceptedTypes.split(",");
     const filtered = newFiles.filter((file) => accepted.includes(file.type));
     this._files = [...this._files, ...filtered];
+
+    //Dispatch custom event when files change for form integration
+    this.dispatchEvent(
+      new CustomEvent("files-changed", {
+        detail: { files: this._files },
+        bubbles: true,
+      })
+    );
   }
 
   private removeFile(fileToRemove: File) {
     this._files = this._files.filter((file) => file.name !== fileToRemove.name);
+
+    // Dispatch event when files are removed
+    this.dispatchEvent(
+      new CustomEvent("files-changed", {
+        detail: { files: this._files },
+        bubbles: true,
+      })
+    );
+  }
+
+  // External access to files
+  public getFiles(): File[] {
+    return this._files;
   }
 
   // Append to FormData
-  public appendToFormData(): FormData {
-    const formData = new FormData();
-    this._files.forEach((file) => formData.append("files", file, file.name));
-    console.dir(formData);
-    return formData;
+  public appendToFormData(
+    formData: FormData,
+    fieldName: string = "files"
+  ): void {
+    this._files.forEach((file) => formData.append(fieldName, file, file.name));
+  }
+
+  // Hook into events of parent form, if exists.
+  connectedCallback() {
+    super.connectedCallback();
+
+    // Get parent form
+    const form = this.closest("form");
+    if (form) {
+      // Listen for form submit events
+      form.addEventListener("submit", (e: Event) => {
+        if (this._files.length < this.required) {
+          e.preventDefault();
+          alert("Please select at least one file");
+        }
+      });
+
+      // Add form data when form is submitted
+      form.addEventListener("formdata", (e: Event) => {
+        const formDataEvent = e as FormDataEvent;
+        this.appendToFormData(formDataEvent.formData);
+      });
+    }
   }
 
   render() {
     return html`
-      <div class="upload-zone" @drop="${this.onDrop}">
+      <div
+        class="upload-zone"
+        @drop="${this.onDrop}"
+        @click="${this.onUploadZoneClick}"
+      >
         <p>Bilder hierher ziehen oder zum Auswählen anklicken</p>
         <input
           type="file"
@@ -100,6 +155,10 @@ export class PictureUpload extends LitElement {
       padding: 16px;
       text-align: center;
       cursor: pointer;
+    }
+    .upload-zone:hover {
+      border-color: #666;
+      background-color: #f9f9f9;
     }
     .preview-container {
       display: flex;
