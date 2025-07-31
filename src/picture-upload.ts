@@ -18,10 +18,10 @@ export class PictureUpload extends LitElement {
 
   // Reference to the file input element
   @query("#fileInput")
-  private fileInput!: HTMLInputElement;
+  private _fileInputElement!: HTMLInputElement;
 
   // MIME types
-  _acceptedTypes: string = "image/png,image/jpeg";
+  private _acceptedTypes: string = "image/png,image/jpeg";
 
   // External access to files
   public getFiles(): File[] {
@@ -30,7 +30,7 @@ export class PictureUpload extends LitElement {
 
   // Redirect click of container to "fileInput"-component
   private onUploadZoneClick() {
-    this.fileInput.click();
+    this._fileInputElement.click();
   }
 
   // 1. When user drops file
@@ -49,13 +49,8 @@ export class PictureUpload extends LitElement {
   }
 
   private onFileInput(newFiles: File[]) {
-    const accepted = this._acceptedTypes.split(",");
-
-    if (newFiles.find((x) => accepted.includes(x.type))) {
-      // TODO: Tell user one file type was not accepted.
-    }
-
     // Add files that have correct type.
+    const accepted = this._acceptedTypes.split(",");
     const filtered = newFiles.filter((file) => accepted.includes(file.type));
     this._files = [...this._files, ...filtered];
 
@@ -118,7 +113,7 @@ export class PictureUpload extends LitElement {
         @drop="${this.onDrop}"
         @click="${this.onUploadZoneClick}"
       >
-        <p>Bilder hierher ziehen oder zum Auswählen anklicken</p>
+        <p>Bilder hierher ziehen oder zum Auswählen anklicken (PNG/JPEG)</p>
         <input
           type="file"
           id="fileInput"
