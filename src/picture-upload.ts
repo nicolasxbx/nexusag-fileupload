@@ -28,6 +28,14 @@ export class PictureUpload extends LitElement {
     this._fileInputElement.click();
   }
 
+  // Prevent default drag behaviors for Drag&Drop to work.
+  private onDragOver(e: DragEvent) {
+    e.preventDefault();
+  }
+  private onDragEnter(e: DragEvent) {
+    e.preventDefault();
+  }
+
   // Input event 1: user drops file
   private onDrop(e: DragEvent) {
     e.preventDefault();
@@ -120,6 +128,8 @@ export class PictureUpload extends LitElement {
       <div
         class="upload-zone"
         @drop="${this.onDrop}"
+        @dragover="${this.onDragOver}"
+        @dragenter="${this.onDragEnter}"
         @click="${this.onUploadZoneClick}"
       >
         <p>Bilder hierher ziehen oder zum Auswählen anklicken</p>
@@ -198,7 +208,7 @@ export class PictureUpload extends LitElement {
     .remove-file-button {
       position: absolute;
       top: 6px;
-      right: 14px;
+      right: 8px;
       z-index: 10;
       cursor: pointer;
       color: red;
