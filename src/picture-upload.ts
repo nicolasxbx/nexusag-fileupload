@@ -20,7 +20,7 @@ export class PictureUpload extends LitElement {
   @query("#fileInput")
   private _fileInputElement!: HTMLInputElement;
 
-  // MIME types
+  // Accepted MIME types
   private _acceptedTypes: string = "image/png,image/jpeg";
 
   // Redirect click of container to "fileInput"-component
