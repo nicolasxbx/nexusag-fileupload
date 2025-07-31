@@ -28,13 +28,13 @@ export class PictureUpload extends LitElement {
     this._fileInputElement.click();
   }
 
-  // 1. When user drops file
+  // Input event 1: user drops file
   private onDrop(e: DragEvent) {
     e.preventDefault();
     if (e.dataTransfer) this.onFileInput(Array.from(e.dataTransfer.files));
   }
 
-  // 2. When user selects file
+  // Input event 2: user selects file
   private onFileSelect(e: Event) {
     const input = e.target as HTMLInputElement;
     if (input.files) {
@@ -122,7 +122,7 @@ export class PictureUpload extends LitElement {
         @drop="${this.onDrop}"
         @click="${this.onUploadZoneClick}"
       >
-        <p>Bilder hierher ziehen oder zum Auswählen anklicken (PNG/JPEG)</p>
+        <p>Bilder hierher ziehen oder zum Auswählen anklicken</p>
         <input
           type="file"
           id="fileInput"
@@ -182,11 +182,11 @@ export class PictureUpload extends LitElement {
       position: relative;
       flex-direction: column;
       align-items: center;
-      width: 100px;
+      width: 150px;
     }
     .preview img {
-      width: 80px;
-      height: 80px;
+      width: 150px;
+      height: 100px;
       object-fit: cover;
       border-radius: 4px;
     }
