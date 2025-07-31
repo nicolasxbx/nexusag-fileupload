@@ -23,11 +23,6 @@ export class PictureUpload extends LitElement {
   // MIME types
   private _acceptedTypes: string = "image/png,image/jpeg";
 
-  // External access to files
-  public getFiles(): File[] {
-    return this._files;
-  }
-
   // Redirect click of container to "fileInput"-component
   private onUploadZoneClick() {
     this._fileInputElement.click();
@@ -75,7 +70,21 @@ export class PictureUpload extends LitElement {
     );
   }
 
-  // Append to FormData
+  // Access #1: External property access
+  public getFiles(): File[] {
+    return this._files;
+  }
+
+  // Acceess #2: As FormData (JSON Serializable)
+  public getFormData(): FormData {
+    const formData = new FormData();
+    this._files.forEach((file, index) => {
+      formData.append(`file${index}`, file, file.name);
+    });
+    return formData;
+  }
+
+  // Access #3: Append to FormData (JSON Serializable)
   public appendToFormData(
     formData: FormData,
     fieldName: string = "files"
@@ -83,7 +92,7 @@ export class PictureUpload extends LitElement {
     this._files.forEach((file) => formData.append(fieldName, file, file.name));
   }
 
-  // Hook into events of parent form, if exists.
+  // Acceess #4: Hook into events of parent form, if exists.
   connectedCallback() {
     super.connectedCallback();
 
