@@ -50,6 +50,12 @@ export class PictureUpload extends LitElement {
 
   private onFileInput(newFiles: File[]) {
     const accepted = this._acceptedTypes.split(",");
+
+    if (newFiles.find((x) => accepted.includes(x.type))) {
+      // TODO: Tell user one file type was not accepted.
+    }
+
+    // Add files that have correct type.
     const filtered = newFiles.filter((file) => accepted.includes(file.type));
     this._files = [...this._files, ...filtered];
 
