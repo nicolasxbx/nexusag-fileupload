@@ -4,7 +4,7 @@ import { customElement, property, query, state } from "lit/decorators.js";
 /**
  * An interactive reusable component to upload pictures (.jpg, .png)
  * Features: Preview, Drag & Drop
- * @required = if atleast
+ * @required The minimum amount of files that have to be uploaded
  */
 @customElement("picture-upload")
 export class PictureUpload extends LitElement {
@@ -23,16 +23,23 @@ export class PictureUpload extends LitElement {
   // MIME types
   _acceptedTypes: string = "image/png,image/jpeg";
 
+  // External access to files
+  public getFiles(): File[] {
+    return this._files;
+  }
+
   // Redirect click of container to "fileInput"-component
   private onUploadZoneClick() {
     this.fileInput.click();
   }
 
+  // 1. When user drops file
   private onDrop(e: DragEvent) {
     e.preventDefault();
     if (e.dataTransfer) this.onFileInput(Array.from(e.dataTransfer.files));
   }
 
+  // 2. When user selects file
   private onFileSelect(e: Event) {
     const input = e.target as HTMLInputElement;
     if (input.files) {
@@ -67,11 +74,6 @@ export class PictureUpload extends LitElement {
     );
   }
 
-  // External access to files
-  public getFiles(): File[] {
-    return this._files;
-  }
-
   // Append to FormData
   public appendToFormData(
     formData: FormData,
@@ -103,7 +105,7 @@ export class PictureUpload extends LitElement {
     }
   }
 
-  render() {
+  protected render() {
     return html`
       <div
         class="upload-zone"
@@ -173,8 +175,9 @@ export class PictureUpload extends LitElement {
       width: 100px;
     }
     .preview img {
-      max-width: 100%;
-      max-height: 100px;
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
       border-radius: 4px;
     }
     .file-name {
@@ -200,6 +203,7 @@ export class PictureUpload extends LitElement {
   `;
 }
 
+// For TypeScript
 declare global {
   interface HTMLElementTagNameMap {
     "picture-upload": PictureUpload;
